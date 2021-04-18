@@ -141,6 +141,7 @@ export default class SpecsDisplay extends React.Component {
           { title: 'w runs', value: this.state.withRuns.length, color: '#E38627' },
           { title: 'w/o', value: this.state.withoutRuns.length, color: '#C13C37' },
         ]}
+        radius="40"
         label={({ dataEntry }) => dataEntry.value}
           segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
 
@@ -159,6 +160,7 @@ export default class SpecsDisplay extends React.Component {
           { title: 'pass', value: this.state.currentlyPassing.length, color: '#E38627' },
           { title: 'fail', value: this.state.currentlyFailing.length, color: '#C13C37' },
         ]}
+        radius="40"
         label={({ dataEntry }) => dataEntry.value}
           segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
 
@@ -180,6 +182,7 @@ export default class SpecsDisplay extends React.Component {
           { title: 'w runs', value: this.state.criticalsWithRuns.length, color: '#E38627' },
           { title: 'w/o', value: this.state.criticalsWithoutRuns.length, color: '#C13C37' },
         ]}
+        radius="40"
         label={({ dataEntry }) => dataEntry.value}
           segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
 
@@ -200,6 +203,7 @@ export default class SpecsDisplay extends React.Component {
           { title: 'fail', value: this.state.criticalsFailing.length, color: '#C13C37' },
         ]}
         label={({ dataEntry }) => dataEntry.value}
+        radius="40"
           segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
         />
       </div>
