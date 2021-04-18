@@ -45,10 +45,15 @@
 }
 
 #pie-charts-row {
+  justify-content: center;
   margin-top: 10px;
   margin-bottom: 10px;
-  border: 2px solid lightgrey;
   height: 150px;
+}
+
+.pie-chart-title {
+  margin-bottom: 8px;
+
 }
 
 .pie-chart-container {

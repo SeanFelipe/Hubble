@@ -13,15 +13,31 @@ export default class SpecsDisplay extends React.Component {
       withoutRuns: [],
       currentlyPassing: [],
       currentlyFailing: [],
+      criticalsWithRuns: [],
+      criticalsWithoutRuns: [],
+      criticalsPassing: [],
+      criticalsFailing: [],
     }
+
+    this.CHART_SHIFT_SIZE = 5
   }
 
   async componentDidMount() {
     const specData = await getSpecs()
-    const [ withRuns, withoutRuns ] = this.parseRunData(specData)
+    const [
+      withRuns,
+      withoutRuns,
+      criticalsWithRuns,
+      criticalsWithoutRuns
+    ] = this.parseRunData(specData)
+    console.log("SpecsDisplay criticalsWithRuns: " + JSON.stringify(criticalsWithRuns))
+    //console.log("SpecsDisplay criticalsFailing: " + JSON.stringify(criticalsFailing))
+
     const [ currentlyPassing, currentlyFailing ] = this.parsePassFail(withRuns)
-    console.log("SpecsDisplay currently passing: " + JSON.stringify(currentlyPassing))
-    console.log("SpecsDisplay currently failing: " + JSON.stringify(currentlyFailing))
+    const [ criticalsPassing, criticalsFailing ] = this.parseCriticalRuns(criticalsWithRuns)
+    console.log("SpecsDisplay criticalsPassing: " + JSON.stringify(criticalsPassing))
+    console.log("SpecsDisplay criticalsFailing: " + JSON.stringify(criticalsFailing))
+
     this.setState({
       specData,
       totalSpecs: specData.length,
@@ -29,24 +45,37 @@ export default class SpecsDisplay extends React.Component {
       withoutRuns,
       currentlyPassing,
       currentlyFailing,
+      criticalsWithRuns,
+      criticalsWithoutRuns,
+      criticalsPassing,
+      criticalsFailing,
     })
   }
 
   parseRunData = (specData) => {
+    // TODO: clean this up, return an object
     const withRuns = []
     const withoutRuns = []
+    const criticalsWithRuns = []
+    const criticalsWithoutRuns = []
 
     for (let ii=0; ii<specData.length; ii++ ) {
       const data = specData[ii]
       if ( data.run_records.length === 0 ) {
         withoutRuns.push(data)
+        if ( criticalsWithoutRuns.length < 3 ) {
+          criticalsWithoutRuns.push(data)
+        }
       } else {
+        if ( criticalsWithRuns.length < 3 ) {
+          criticalsWithRuns.push(data)
+        }
         withRuns.push(data)
       }
     }
     //console.log("parseRunData withRuns: " + JSON.stringify(withRuns))
     //console.log("parseRunData withoutRuns: " + JSON.stringify(withoutRuns))
-    return [ withRuns, withoutRuns ]
+    return [ withRuns, withoutRuns, criticalsWithRuns, criticalsWithoutRuns ]
   }
 
   parsePassFail = (withRuns) => {
@@ -57,10 +86,10 @@ export default class SpecsDisplay extends React.Component {
       const spec = withRuns[ii]
       const rrs = spec.run_records
       const lastRecord = rrs[rrs.length - 1]
-      console.log("parsePassFail with rrs.length: " + rrs.length)
-      console.log("parsePassFail with rrs: " + JSON.stringify(rrs))
-      console.log("parsePassFail with lastRecord: " + JSON.stringify(lastRecord))
-      console.log("parsePassFail with lastRecord p/f: " + lastRecord.result)
+      //console.log("parsePassFail with rrs.length: " + rrs.length)
+      //console.log("parsePassFail with rrs: " + JSON.stringify(rrs))
+      //console.log("parsePassFail with lastRecord: " + JSON.stringify(lastRecord))
+      //console.log("parsePassFail with lastRecord p/f: " + lastRecord.result)
 
       if ( lastRecord.result.toLowerCase() === 'pass' ) {
         passing.push(spec)
@@ -73,9 +102,33 @@ export default class SpecsDisplay extends React.Component {
     return [ passing, failing ]
   }
 
+  parseCriticalRuns = (withRuns) => {
+    const passing = []
+    const failing = []
+
+    for (let ii=0; ii<withRuns.length; ii++ ) {
+      const spec = withRuns[ii]
+      const rrs = spec.run_records
+      const lastRecord = rrs[rrs.length - 1]
+      console.log("parseCriticalRuns with rrs.length: " + rrs.length)
+      console.log("parseCriticalRuns with rrs: " + JSON.stringify(rrs))
+      console.log("parseCriticalRuns with lastRecord: " + JSON.stringify(lastRecord))
+      console.log("parseCriticalRuns with lastRecord p/f: " + lastRecord.result)
+
+      if ( lastRecord.result.toLowerCase() === 'pass' ) {
+        passing.push(spec)
+      } else {
+        failing.push(spec)
+      }
+    }
+    //console.log("parseRunData withRuns: " + JSON.stringify(withRuns))
+    //console.log("parseRunData withoutRuns: " + JSON.stringify(withoutRuns))
+    return [ passing, failing ]
+
+  }
+
 
   renderSpecsWithRunsPieChart = () => {
-    const shiftSize = 2;
     return (
       <div className="pie-chart-container">
         <div className="pie-chart-title">
@@ -89,7 +142,7 @@ export default class SpecsDisplay extends React.Component {
           { title: 'w/o', value: this.state.withoutRuns.length, color: '#C13C37' },
         ]}
         label={({ dataEntry }) => dataEntry.value}
-          segmentsShift={(index) => (index === 0 ? shiftSize : 0.5)}
+          segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
 
         />
       </div>
@@ -97,7 +150,6 @@ export default class SpecsDisplay extends React.Component {
   }
 
   renderPassFailPieChart = () => {
-    const shiftSize = 2;
     return (
       <div className="pie-chart-container">
         <div className="pie-chart-title">
@@ -108,12 +160,52 @@ export default class SpecsDisplay extends React.Component {
           { title: 'fail', value: this.state.currentlyFailing.length, color: '#C13C37' },
         ]}
         label={({ dataEntry }) => dataEntry.value}
-          segmentsShift={(index) => (index === 0 ? shiftSize : 0.5)}
+          segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
 
         />
       </div>
     )
   }
+
+  renderCriticalsPendingPieChart = () => {
+    return (
+      <div className="pie-chart-container">
+        <div className="pie-chart-title">
+          {/*
+          Automated vs Pending ( { this.state.totalSpecs } total )
+          */}
+          Criticals Pending vs Automated
+        </div>
+        <PieChart data={[
+          { title: 'w runs', value: this.state.criticalsWithRuns.length, color: '#E38627' },
+          { title: 'w/o', value: this.state.criticalsWithoutRuns.length, color: '#C13C37' },
+        ]}
+        label={({ dataEntry }) => dataEntry.value}
+          segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
+
+        />
+      </div>
+    )
+  }
+
+
+  renderCriticalPassFailPieChart = () => {
+    return (
+      <div className="pie-chart-container">
+        <div className="pie-chart-title">
+           Criticals P/F
+        </div>
+        <PieChart data={[
+          { title: 'pass', value: this.state.criticalsPassing.length, color: '#E38627' },
+          { title: 'fail', value: this.state.criticalsFailing.length, color: '#C13C37' },
+        ]}
+        label={({ dataEntry }) => dataEntry.value}
+          segmentsShift={(index) => (index === 0 ? this.CHART_SHIFT_SIZE : 0.5)}
+        />
+      </div>
+    )
+  }
+
 
 
   render() {
@@ -122,6 +214,8 @@ export default class SpecsDisplay extends React.Component {
         <div id="pie-charts-row" className="flex-row">
           { this.renderSpecsWithRunsPieChart() }
           { this.renderPassFailPieChart() }
+          { this.renderCriticalsPendingPieChart() }
+          { this.renderCriticalPassFailPieChart() }
         </div>
         {
           this.state.specData.map(
