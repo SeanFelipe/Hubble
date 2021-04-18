@@ -20,7 +20,7 @@ export default class SpecsRecord extends React.Component {
   render() {
     const rrs = this.props.data.run_records
     const spec = this.props.data.spec
-    console.log("SpecRecord w data: " + JSON.stringify(this.props.data.spec))
+    //console.log("SpecRecord w data: " + JSON.stringify(this.props.data.spec))
     return (
       <>
         { this.renderSpec(spec) }
