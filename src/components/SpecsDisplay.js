@@ -1,6 +1,6 @@
 import React from  'react'
 import { PieChart } from 'react-minimal-pie-chart';
-import SpecRecord from './SpecRecord'
+import SpecList from './SpecList'
 import { getSpecs } from '../net/net'
 
 export default class SpecsDisplay extends React.Component {
@@ -221,11 +221,8 @@ export default class SpecsDisplay extends React.Component {
           { this.renderCriticalsPendingPieChart() }
           { this.renderCriticalPassFailPieChart() }
         </div>
-        {
-          this.state.specData.map(
-            (data, ii) => { return <SpecRecord key={ii} data={data}/> }
-          )
-        }
+
+        <SpecList specData={this.state.specData} />
       </div>
     )
   }
