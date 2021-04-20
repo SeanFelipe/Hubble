@@ -132,10 +132,7 @@ export default class SpecsDisplay extends React.Component {
     return (
       <div className="pie-chart-container">
         <div className="pie-chart-title">
-          {/*
-          Automated vs Pending ( { this.state.totalSpecs } total )
-          */}
-          Automated vs Pending
+          Automated / Pending
         </div>
         <PieChart data={[
           { title: 'w runs', value: this.state.withRuns.length, color: '#E38627' },
@@ -173,10 +170,7 @@ export default class SpecsDisplay extends React.Component {
     return (
       <div className="pie-chart-container">
         <div className="pie-chart-title">
-          {/*
-          Automated vs Pending ( { this.state.totalSpecs } total )
-          */}
-          Criticals Pending vs Automated
+          Criticals Pending / Automated
         </div>
         <PieChart data={[
           { title: 'w runs', value: this.state.criticalsWithRuns.length, color: '#E38627' },
