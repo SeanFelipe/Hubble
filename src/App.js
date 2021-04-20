@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        PTES Automation Status
+        PTES Automation
       </header>
       {/*
       <Sandbox />
