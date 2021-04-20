@@ -29,10 +29,14 @@ export default class SpecsRecord extends React.Component {
     const rrs = this.props.data.run_records
     const spec = this.props.data.spec
     const mx = spec.description.split("\n")
-    const lastRunResult = rrs[0].result
-    const lastRRClass = lastRunResult === "pass" ? 'run-result-pass' : 'run-result-fail'
-    console.log("SpecRecord w lastRunResult: " + lastRunResult)
+    let lastRunResult = "no runs"
+    let lastRRClass = "run-result-no-runs"
+    if ( rrs[0] ) {
+      lastRunResult = rrs[0].result
+      lastRRClass = lastRunResult === "pass" ? 'run-result-pass' : 'run-result-fail'
+    }
 
+    console.log("SpecRecord w lastRunResult: " + lastRunResult)
     return (
       <div className="spec-record">
         <div onClick={this.toggleExpand} className="spec-summary-container">

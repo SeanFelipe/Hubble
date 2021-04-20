@@ -2,6 +2,9 @@ make sure pass/fail is the *most recent* example
 - if run records are out of order, then p/f could be miscalculated
 # TODO
 
+what if spec has no run records
+- view spec with no run records
+
 need a spec with multiple run records, with disparate pass/fail
 --> bunch of rrs ending with fail should fail
 --> bunch of rrs ending with pass should pass
